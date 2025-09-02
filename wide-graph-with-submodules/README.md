@@ -49,3 +49,26 @@ real	0m1.856s
 user	0m3.345s
 sys     0m0.162s
 ```
+
+### State DeepCopy Reduction https://github.com/opentofu/opentofu/issues/1579
+AMD Ryzen 7 2700X / 64GB RAM / M.2 SSD
+
+`time TOFU_CPU_PROFILE=prof.out TF_LOG=error TF_LOG_PROVIDER=error TF_LOG_SDK=error ~/go/bin/tofu apply --auto-approve`
+
+main:
+real    9m13.001s
+user    25m46.813s
+sys     0m44.164s
+
+After https://github.com/opentofu/opentofu/pull/3011:
+real    7m14.589s
+user    22m4.922s
+sys     0m43.872s
+
+After https://github.com/opentofu/opentofu/pull/3110
+real    0m32.476s
+user    2m12.123s
+sys     0m24.759s
+
+Cutting the number of deep copies in half shows a significant benefit.  Removing the DeepCopy altogether dramatically
+reduces the GC pressure and cuts the actual overhead of this test down by over an order of magnitude.

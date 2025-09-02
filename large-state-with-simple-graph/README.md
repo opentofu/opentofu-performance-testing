@@ -25,3 +25,33 @@ sys     0m42.058s
 ```
 
 It's worth noting that more instances (1500) caused an OOM on a machine with ~48GB free and should be investigated. 
+
+### State DeepCopy Reduction https://github.com/opentofu/opentofu/issues/1580
+AMD Ryzen 7 2700X / 64GB RAM / M.2 SSD
+
+`time TOFU_CPU_PROFILE=prof.out TF_LOG=error TF_LOG_PROVIDER=error TF_LOG_SDK=error ~/go/bin/tofu apply --auto-approve`
+
+Before Changes: (standard sync interval)
+real    6m29.905s
+user    7m54.563s
+sys     1m12.524s
+
+Memory Used: 10Gb
+
+After https://github.com/opentofu/opentofu/pull/3011:
+real    6m23.108s
+user    8m7.307s
+sys     0m58.747s
+
+Memory Used: 9.2Gb
+
+After https://github.com/opentofu/opentofu/pull/3110
+
+real    0m26.447s!
+user    1m55.671s
+sys     0m34.533s
+
+Memory Used: 4.6Gb!
+
+I suspect that although the amount of deepcopies happening on main vs 3011 is cut by half, the GC overhead is the primariy bottleneck.
+That is why the real improvement is only seen in the more aggressive optimization, which removes the need to DeepCopy entirely
