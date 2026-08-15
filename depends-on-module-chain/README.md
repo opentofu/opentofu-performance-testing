@@ -11,6 +11,7 @@ a nested hierarchy of submodules, each containing a resource and data source.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
+| `TOFU` | `tofu` | Path to the OpenTofu binary |
 | `CHAIN_LENGTH` | 10 | Number of modules in the `depends_on` chain |
 | `DEPTH` | 4 | Nesting depth of submodules within each chain step |
 
@@ -22,6 +23,10 @@ bash run.sh
 
 # Run with custom parameters
 CHAIN_LENGTH=50 DEPTH=3 bash run.sh
+
+# Run with a custom binary
+TOFU=/tmp/tofu-custom bash run.sh
+
 ```
 
 ## Used to validate:
@@ -32,18 +37,17 @@ Before (v1.13.0-dev, commit 3561785):
 
 | Chain | Depth 1 | Depth 2 | Depth 3 | Depth 4 |
 |-------|---------|---------|---------|---------|
-| 1     | 0.08s   | 0.18s   | 0.19s   | 0.21s   |
-| 2     | 0.08s   | 0.18s   | 0.24s   | 0.20s   |
-| 5     | 0.08s   | 0.21s   | 0.23s   | 0.46s   |
-| 10    | 0.08s   | 0.27s   | 1.80s   | 35.25s  |
-| 50    | 0.09s   | 42.86s  | >10m    | >10m    |
+| 1     | 0.10s   | 0.26s   | 0.22s   | 0.29s   |
+| 2     | 0.08s   | 0.22s   | 0.30s   | 0.26s   |
+| 5     | 0.08s   | 0.37s   | 2.28s   | 27.21s  |
+| 10    | 0.08s   | 4.06s   | 4m4s    | >30m    |
 
-Expected (local fix):
+After (local fix):
 
 | Chain | Depth 1 | Depth 2 | Depth 3 | Depth 4 |
 |-------|---------|---------|---------|---------|
-| 1     | 0.08s   | 0.22s   | 0.25s   | 0.22s   |
-| 2     | 0.08s   | 0.19s   | 0.22s   | 0.24s   |
-| 5     | 0.08s   | 0.22s   | 0.23s   | 0.28s   |
-| 10    | 0.08s   | 0.25s   | 0.26s   | 0.32s   |
-| 50    | 0.09s   | 0.69s   | 1.24s   | 2.09s   |
+| 1     | 0.02s   | 0.20s   | 0.24s   | 0.27s   |
+| 2     | 0.02s   | 0.21s   | 0.22s   | 0.25s   |
+| 5     | 0.02s   | 0.24s   | 0.26s   | 0.32s   |
+| 10    | 0.02s   | 0.28s   | 0.40s   | 0.44s   |
+| 50    | 0.03s   | 1.22s   | 2.34s   | 4.15s   |

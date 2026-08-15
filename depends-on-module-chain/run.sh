@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+TOFU="${TOFU:-tofu}"
 CHAIN_LENGTH="${CHAIN_LENGTH:-10}"
 DEPTH="${DEPTH:-4}"
 
@@ -33,8 +34,24 @@ resource "tfcoremock_simple_resource" "main" {
   string = "\${var.name}-l${level}"
 }
 
-data "tfcoremock_simple_resource" "lookup" {
-  id = "\${var.name}-l${level}-data"
+data "tfcoremock_simple_resource" "a" {
+  id = "\${var.name}-l${level}-a"
+}
+
+data "tfcoremock_simple_resource" "b" {
+  id = "\${var.name}-l${level}-b"
+}
+
+data "tfcoremock_simple_resource" "c" {
+  id = "\${var.name}-l${level}-c"
+}
+
+data "tfcoremock_simple_resource" "d" {
+  id = "\${var.name}-l${level}-d"
+}
+
+data "tfcoremock_simple_resource" "e" {
+  id = "\${var.name}-l${level}-e"
 }
 
 output "id" {
@@ -53,8 +70,24 @@ resource "tfcoremock_simple_resource" "main" {
   string = "\${var.name}-l${level}"
 }
 
-data "tfcoremock_simple_resource" "lookup" {
-  id = "\${var.name}-l${level}-data"
+data "tfcoremock_simple_resource" "a" {
+  id = "\${var.name}-l${level}-a"
+}
+
+data "tfcoremock_simple_resource" "b" {
+  id = "\${var.name}-l${level}-b"
+}
+
+data "tfcoremock_simple_resource" "c" {
+  id = "\${var.name}-l${level}-c"
+}
+
+data "tfcoremock_simple_resource" "d" {
+  id = "\${var.name}-l${level}-d"
+}
+
+data "tfcoremock_simple_resource" "e" {
+  id = "\${var.name}-l${level}-e"
 }
 
 module "l${next}" {
@@ -103,5 +136,5 @@ for step in $(seq 1 "$CHAIN_LENGTH"); do
   } >> generated/main.tf
 done
 
-tofu -chdir=generated init
-time tofu -chdir=generated plan
+$TOFU -chdir=generated init
+time $TOFU -chdir=generated plan
