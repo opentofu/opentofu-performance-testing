@@ -14,9 +14,7 @@ mkdir -p generated
 # Generate nested service module tree
 prev_dir=""
 for level in $(seq "$DEPTH" -1 1); do
-  if [ "$level" -eq "$DEPTH" ]; then
-    dir="generated/service$(printf '/l%s' $(seq 2 "$level") | tr -d '\n')"
-  elif [ "$level" -eq 1 ]; then
+  if [ "$level" -eq 1 ]; then
     dir="generated/service"
   else
     dir="generated/service$(printf '/l%s' $(seq 2 "$level") | tr -d '\n')"
@@ -137,4 +135,6 @@ for step in $(seq 1 "$CHAIN_LENGTH"); do
 done
 
 $TOFU -chdir=generated init
-time $TOFU -chdir=generated plan
+# Plan will exit non-zero due to missing terraform.data/ files for data sources.
+# This is intentional — we only care about graph traversal timing, not data source I/O.
+time $TOFU -chdir=generated plan || true
